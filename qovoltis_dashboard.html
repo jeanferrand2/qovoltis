@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Qovoltis — Dashboard FP&A</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0C0F14;
+  --surface: #13171F;
+  --surface2: #1C2230;
+  --border: rgba(255,255,255,0.07);
+  --border2: rgba(255,255,255,0.14);
+  --purple: #7C6EF5;
+  --purple-light: #A99DF9;
+  --purple-dim: rgba(124,110,245,0.15);
+  --teal: #3ECFAA;
+  --teal-dim: rgba(62,207,170,0.12);
+  --blue: #5CA4E8;
+  --blue-dim: rgba(92,164,232,0.12);
+  --coral: #F07057;
+  --coral-dim: rgba(240,112,87,0.12);
+  --amber: #F0B429;
+  --amber-dim: rgba(240,180,41,0.12);
+  --red: #E24B4A;
+  --green: #3ECF8E;
+  --text: #F0EEF8;
+  --text2: #8B8FA8;
+  --text3: #555A70;
+  --serif: 'DM Serif Display', Georgia, serif;
+  --sans: 'DM Sans', system-ui, sans-serif;
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--sans);
+  font-size: 14px;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* Background grid */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(124,110,245,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(124,110,245,0.03) 1px, transparent 1px);
+  background-size: 40px 40px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.page { position: relative; z-index: 1; padding: 48px 32px 64px; max-width: 900px; margin: 0 auto; }
+
+/* HEADER */
+.header { text-align: center; margin-bottom: 56px; }
+
+.logo-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 24px;
+}
+
+.logo-mark {
+  width: 32px; height: 32px;
+  background: var(--purple);
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+}
+
+.logo-mark svg { width: 18px; height: 18px; }
+
+.logo-name {
+  font-family: var(--serif);
+  font-size: 20px;
+  color: var(--text);
+  letter-spacing: -0.3px;
+}
+
+.header h1 {
+  font-family: var(--serif);
+  font-size: clamp(32px, 5vw, 48px);
+  font-weight: 400;
+  letter-spacing: -1px;
+  line-height: 1.1;
+  color: var(--text);
+  margin-bottom: 12px;
+}
+
+.header h1 em {
+  font-style: italic;
+  color: var(--purple-light);
+}
+
+.header-sub {
+  font-size: 14px;
+  color: var(--text2);
+  font-weight: 300;
+  letter-spacing: 0.2px;
+}
+
+.formula-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: 100px;
+  padding: 10px 20px;
+  margin-top: 20px;
+  font-size: 13px;
+  color: var(--text2);
+  font-weight: 300;
+}
+
+.formula-pill strong { color: var(--text); font-weight: 500; }
+.formula-pill .op { color: var(--text3); }
+.formula-pill .gte { color: var(--green); font-weight: 500; }
+
+/* KPI STRIP */
+.kpi-strip {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  margin-bottom: 48px;
+}
+
+.kpi {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 16px;
+  transition: border-color 0.2s;
+}
+.kpi:hover { border-color: var(--border2); }
+
+.kpi-val {
+  font-family: var(--serif);
+  font-size: 28px;
+  font-weight: 400;
+  line-height: 1;
+  margin-bottom: 6px;
+}
+
+.kpi-label { font-size: 11px; color: var(--text3); font-weight: 400; text-transform: uppercase; letter-spacing: 0.8px; }
+
+/* TREE */
+.tree { display: flex; flex-direction: column; align-items: center; gap: 0; }
+
+/* Connector SVG */
+.conn { width: 100%; height: 40px; display: block; }
+
+/* Root node */
+.node-root {
+  display: block;
+  text-decoration: none;
+  background: var(--purple-dim);
+  border: 1px solid var(--purple);
+  border-radius: 16px;
+  padding: 20px 32px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  min-width: 300px;
+}
+.node-root:hover { background: rgba(124,110,245,0.25); transform: translateY(-2px); box-shadow: 0 8px 32px rgba(124,110,245,0.2); }
+.node-root .nt { font-family: var(--serif); font-size: 18px; color: var(--purple-light); letter-spacing: -0.3px; }
+.node-root .ns { font-size: 12px; color: var(--text3); margin-top: 4px; }
+
+/* Level 1 */
+.level1 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; width: 100%; }
+
+.node-l1 {
+  display: block;
+  text-decoration: none;
+  border-radius: 14px;
+  padding: 18px 16px;
+  cursor: pointer;
+  transition: all 0.2s;
+  border: 1px solid;
+  position: relative;
+  overflow: hidden;
+}
+.node-l1::after {
+  content: '↗';
+  position: absolute;
+  top: 12px; right: 12px;
+  font-size: 11px;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+.node-l1:hover::after { opacity: 0.6; }
+.node-l1:hover { transform: translateY(-3px); }
+
+.node-l1.teal { background: var(--teal-dim); border-color: rgba(62,207,170,0.3); }
+.node-l1.teal:hover { box-shadow: 0 8px 24px rgba(62,207,170,0.15); }
+.node-l1.blue { background: var(--blue-dim); border-color: rgba(92,164,232,0.3); }
+.node-l1.blue:hover { box-shadow: 0 8px 24px rgba(92,164,232,0.15); }
+.node-l1.coral { background: var(--coral-dim); border-color: rgba(240,112,87,0.3); }
+.node-l1.coral:hover { box-shadow: 0 8px 24px rgba(240,112,87,0.15); }
+.node-l1.amber { background: var(--amber-dim); border-color: rgba(240,180,41,0.3); }
+.node-l1.amber:hover { box-shadow: 0 8px 24px rgba(240,180,41,0.15); }
+
+.nt { font-weight: 500; font-size: 13px; line-height: 1.3; }
+.ns { font-size: 11px; color: var(--text3); margin-top: 4px; line-height: 1.4; }
+
+.node-l1.teal .nt { color: var(--teal); }
+.node-l1.blue .nt { color: var(--blue); }
+.node-l1.coral .nt { color: var(--coral); }
+.node-l1.amber .nt { color: var(--amber); }
+
+.badge {
+  display: inline-block;
+  font-size: 10px;
+  font-weight: 500;
+  padding: 2px 8px;
+  border-radius: 100px;
+  margin-top: 8px;
+}
+.badge-neg { background: rgba(226,75,74,0.15); color: #F09595; border: 1px solid rgba(226,75,74,0.2); }
+.badge-ok { background: rgba(62,207,142,0.12); color: #3ECF8E; border: 1px solid rgba(62,207,142,0.2); }
+.badge-pending { background: rgba(139,143,168,0.1); color: var(--text3); border: 1px solid var(--border); }
+
+/* Level 2 */
+.level2 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; width: 100%; }
+
+.node-l2 {
+  display: block;
+  text-decoration: none;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 14px;
+  transition: all 0.2s;
+  position: relative;
+}
+.node-l2:hover { border-color: var(--border2); background: var(--surface2); transform: translateY(-2px); }
+.node-l2 .nt { font-size: 12px; font-weight: 500; color: var(--text); }
+.node-l2 .ns { font-size: 10px; color: var(--text3); margin-top: 3px; }
+
+/* Section drill */
+.drill-section { margin-top: 8px; width: 100%; }
+.drill-title {
+  font-size: 10px;
+  font-weight: 400;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--text3);
+  margin-bottom: 8px;
+  padding-left: 2px;
+}
+
+/* Cap link */
+.cap-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 40px;
+  text-decoration: none;
+  color: var(--text3);
+  font-size: 12px;
+  font-weight: 300;
+  transition: color 0.2s;
+}
+.cap-link:hover { color: var(--text2); }
+.cap-link svg { width: 14px; height: 14px; opacity: 0.5; }
+
+/* Period badge */
+.period {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 5px 12px;
+  font-size: 11px;
+  color: var(--text3);
+  margin-bottom: 8px;
+}
+.period-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--amber); }
+
+/* Animations */
+@keyframes fadeUp { from { opacity:0; transform:translateY(16px); } to { opacity:1; transform:translateY(0); } }
+.header { animation: fadeUp 0.6s ease both; }
+.kpi-strip { animation: fadeUp 0.6s 0.1s ease both; }
+.tree { animation: fadeUp 0.6s 0.2s ease both; }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <header class="header">
+    <div class="logo-row">
+      <div class="logo-mark">
+        <svg viewBox="0 0 18 18" fill="none"><path d="M3 9h3l2-6 4 12 2-6h3" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+      <span class="logo-name">Qovoltis</span>
+    </div>
+    <h1>Dashboard <em>FP&A</em><br>Codir</h1>
+    <p class="header-sub">Pilotage vers le breakeven EBITDA · Sans levée supplémentaire</p>
+    <div>
+      <div class="formula-pill">
+        <strong>EBITDA</strong>
+        <span class="op">=</span>
+        <span>Marge déploiement</span>
+        <span class="op">+</span>
+        <span>Marge Run</span>
+        <span class="op">−</span>
+        <span>Frais généraux</span>
+        <span class="gte">≥ 0</span>
+      </div>
+    </div>
+  </header>
+
+  <div class="kpi-strip">
+    <div class="kpi">
+      <div class="kpi-val" style="color:var(--teal)">23</div>
+      <div class="kpi-label">Chantiers livrés</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-val" style="color:var(--blue)">65</div>
+      <div class="kpi-label">Bornes déployées</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-val" style="color:var(--amber)">236 k€</div>
+      <div class="kpi-label">CA déploiement</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-val" style="color:var(--red)">~0.4%</div>
+      <div class="kpi-label">Marge globale</div>
+    </div>
+  </div>
+
+  <div style="display:flex;justify-content:center;margin-bottom:16px">
+    <div class="period"><div class="period-dot"></div>Jan / Fév 2026</div>
+  </div>
+
+  <div class="tree">
+
+    <a class="node-root" href="https://www.notion.so/33deb69768dc8166b8c1d9856cc86946" target="_blank">
+      <div class="nt">Objectif breakeven EBITDA</div>
+      <div class="ns">Page racine du dashboard · Cliquer pour ouvrir dans Notion</div>
+    </a>
+
+    <svg class="conn" viewBox="0 0 900 40" preserveAspectRatio="none">
+      <line x1="450" y1="0" x2="113" y2="40" stroke="rgba(124,110,245,0.25)" stroke-width="1"/>
+      <line x1="450" y1="0" x2="337" y2="40" stroke="rgba(124,110,245,0.25)" stroke-width="1"/>
+      <line x1="450" y1="0" x2="563" y2="40" stroke="rgba(124,110,245,0.25)" stroke-width="1"/>
+      <line x1="450" y1="0" x2="787" y2="40" stroke="rgba(124,110,245,0.25)" stroke-width="1"/>
+    </svg>
+
+    <div class="level1">
+      <a class="node-l1 teal" href="https://www.notion.so/33deb69768dc810086d0d9a65b7eaf68" target="_blank">
+        <div class="nt">Marge déploiement</div>
+        <div class="ns">Chantiers livrés & en cours · 236 k€ CA</div>
+        <div><span class="badge badge-neg">0.4% marge</span></div>
+      </a>
+      <a class="node-l1 blue" href="https://www.notion.so/33deb69768dc81d2a952ff9834b2b1f3" target="_blank">
+        <div class="nt">Marge Run</div>
+        <div class="ns">ARR · MRR · Coûts ops parc bornes</div>
+        <div><span class="badge badge-pending">À alimenter</span></div>
+      </a>
+      <a class="node-l1 coral" href="https://www.notion.so/33deb69768dc81b697bbd5ef7aded8f1" target="_blank">
+        <div class="nt">Frais généraux</div>
+        <div class="ns">Structure fixe & variable · RH · IT</div>
+        <div><span class="badge badge-pending">À alimenter</span></div>
+      </a>
+      <a class="node-l1 amber" href="https://www.notion.so/33deb69768dc812b88c7ffdd4751a3da" target="_blank">
+        <div class="nt">Cash & Runway</div>
+        <div class="ns">Position cash · Burn rate · Autonomie</div>
+        <div><span class="badge badge-pending">À alimenter</span></div>
+      </a>
+    </div>
+
+    <svg class="conn" viewBox="0 0 900 40" preserveAspectRatio="none">
+      <line x1="113" y1="0" x2="113" y2="40" stroke="rgba(62,207,170,0.2)" stroke-width="1"/>
+      <line x1="113" y1="0" x2="337" y2="40" stroke="rgba(62,207,170,0.2)" stroke-width="1"/>
+      <line x1="113" y1="0" x2="563" y2="40" stroke="rgba(62,207,170,0.2)" stroke-width="1"/>
+      <line x1="113" y1="0" x2="787" y2="40" stroke="rgba(62,207,170,0.2)" stroke-width="1"/>
+    </svg>
+
+    <div class="level2">
+      <a class="node-l2" href="https://www.notion.so/d5471532a335401dabac2cef924b6896?v=ff4fccd4-e1a3-4dd3-905d-417a3c321500" target="_blank">
+        <div class="nt">Tous les chantiers</div>
+        <div class="ns">23 livrés · tri marge ASC</div>
+      </a>
+      <a class="node-l2" href="https://www.notion.so/d5471532a335401dabac2cef924b6896?v=33deb697-68dc-817a-83df-000cae913df5" target="_blank">
+        <div class="nt">Marge négative</div>
+        <div class="ns">8 chantiers à risque</div>
+        <div><span class="badge badge-neg" style="font-size:9px">filtre actif</span></div>
+      </a>
+      <a class="node-l2" href="https://www.notion.so/26304e2d38634b159bcc8aeec32577f3?v=9c4dcc9f-57a3-4bbc-996d-4a114605e403" target="_blank">
+        <div class="nt">Pipeline / stade</div>
+        <div class="ns">Chantier étude · Travaux · Final.</div>
+      </a>
+      <a class="node-l2" href="https://www.notion.so/26304e2d38634b159bcc8aeec32577f3?v=33deb697-68dc-81f7-b018-000cf9970f74" target="_blank">
+        <div class="nt">Alertes pipeline</div>
+        <div class="ns">B2B −20% · −25%</div>
+        <div><span class="badge badge-neg" style="font-size:9px">marge forecasted</span></div>
+      </a>
+    </div>
+
+  </div>
+
+  <a class="cap-link" href="https://www.notion.so/33deb69768dc812cb6bce9edbdf13865" target="_blank">
+    <svg viewBox="0 0 14 14" fill="none"><path d="M2 7h10M7 2l5 5-5 5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    Documentation & capitalisation
+  </a>
+
+</div>
+</body>
+</html>
