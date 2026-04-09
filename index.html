@@ -4,419 +4,319 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Qovoltis — Dashboard FP&A</title>
-<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 :root {
-  --bg: #0C0F14;
-  --surface: #13171F;
-  --surface2: #1C2230;
-  --border: rgba(255,255,255,0.07);
-  --border2: rgba(255,255,255,0.14);
-  --purple: #7C6EF5;
-  --purple-light: #A99DF9;
-  --purple-dim: rgba(124,110,245,0.15);
-  --teal: #3ECFAA;
-  --teal-dim: rgba(62,207,170,0.12);
-  --blue: #5CA4E8;
-  --blue-dim: rgba(92,164,232,0.12);
-  --coral: #F07057;
-  --coral-dim: rgba(240,112,87,0.12);
-  --amber: #F0B429;
-  --amber-dim: rgba(240,180,41,0.12);
-  --red: #E24B4A;
-  --green: #3ECF8E;
-  --text: #F0EEF8;
-  --text2: #8B8FA8;
-  --text3: #555A70;
-  --serif: 'DM Serif Display', Georgia, serif;
-  --sans: 'DM Sans', system-ui, sans-serif;
+  --white:#FFFFFF; --bg:#F5F6FA;
+  --t1:#191919; --t2:#787781; --t3:#A2A1A8;
+  --brd:#E9E9EB; --brd2:#D6D6D9;
+  --vio:#5B3EFF; --vio25:#FCFBFF; --vio100:#E9E6FF; --vio200:#D2CBFF; --vio300:#9B8AFF; --vio600:#462FC3; --vio700:#37269A;
+  --grn:#61D19D; --red:#C40505; --warn:#FF6C00;
+  --neu100:#F3F3F4; --neu200:#E9E9EB;
+  --f:'Montserrat',sans-serif;
 }
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%;background:var(--bg);font-family:var(--f);font-size:13px;color:var(--t1);font-variant-numeric:tabular-nums;overflow:hidden}
 
-* { margin:0; padding:0; box-sizing:border-box; }
+.page{display:flex;flex-direction:column;height:100vh;padding:14px 18px 10px;gap:10px}
 
-body {
-  background: var(--bg);
-  color: var(--text);
-  font-family: var(--sans);
-  font-size: 14px;
-  min-height: 100vh;
-  overflow-x: hidden;
-}
+/* TOP BAR */
+.topbar{display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.logo{display:flex;align-items:center;gap:8px}
+.logo-mark{width:26px;height:26px;background:var(--vio);border-radius:7px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.logo-mark svg{width:15px;height:15px}
+.logo-name{font-weight:700;font-size:14px;letter-spacing:-0.3px}
+.logo-sub{font-size:10px;font-weight:500;color:var(--t3);margin-top:1px}
+.topbar-right{display:flex;align-items:center;gap:8px}
+.formula-pill{background:var(--white);border:1px solid var(--brd);border-radius:6px;padding:5px 11px;font-size:11px;font-weight:500;color:var(--t2);display:flex;align-items:center;gap:5px;white-space:nowrap}
+.formula-pill strong{color:var(--t1);font-weight:700}
+.formula-pill .op{color:var(--t3)}
+.formula-pill .gte{color:#269F66;font-weight:700}
+.period-tag{background:var(--vio100);border:1px solid var(--vio200);border-radius:6px;padding:5px 10px;font-size:11px;font-weight:600;color:var(--vio);white-space:nowrap}
 
-/* Background grid */
-body::before {
-  content: '';
-  position: fixed;
-  inset: 0;
-  background-image:
-    linear-gradient(rgba(124,110,245,0.03) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(124,110,245,0.03) 1px, transparent 1px);
-  background-size: 40px 40px;
-  pointer-events: none;
-  z-index: 0;
-}
+/* TREE AREA */
+.tree{flex:1;min-height:0;display:flex;flex-direction:column;position:relative}
 
-.page { position: relative; z-index: 1; padding: 48px 32px 64px; max-width: 900px; margin: 0 auto; }
+/* CONNECTOR SVG */
+.conn{width:100%;display:block;overflow:visible;flex-shrink:0}
 
-/* HEADER */
-.header { text-align: center; margin-bottom: 56px; }
+/* LEVELS */
+.level{display:grid;gap:8px;flex-shrink:0}
+.level-root{grid-template-columns:1fr;justify-items:center}
+.level-l1{grid-template-columns:repeat(4,1fr)}
+.level-l2{grid-template-columns:repeat(6,1fr)}
 
-.logo-row {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  margin-bottom: 24px;
-}
+/* NODE BASE */
+.node{display:block;text-decoration:none;border-radius:10px;padding:11px 13px;border:1px solid;transition:transform .15s,box-shadow .15s;position:relative;cursor:pointer}
+.node:hover{transform:translateY(-2px);box-shadow:0 4px 14px rgba(0,0,0,0.07)}
+.node:active{transform:scale(0.98)}
+.node-arr{position:absolute;top:8px;right:9px;font-size:9px;color:var(--t3);opacity:0;transition:opacity .15s;font-family:sans-serif}
+.node:hover .node-arr{opacity:1}
 
-.logo-mark {
-  width: 32px; height: 32px;
-  background: var(--purple);
-  border-radius: 8px;
-  display: flex; align-items: center; justify-content: center;
-}
+/* ROOT */
+.node-root{background:var(--vio100);border-color:var(--vio200);text-align:center;min-width:260px;max-width:340px}
+.node-root .nt{font-size:13px;font-weight:700;color:var(--vio700)}
+.node-root .ns{font-size:10px;font-weight:500;color:var(--vio300);margin-top:2px}
 
-.logo-mark svg { width: 18px; height: 18px; }
+/* L1 */
+.nt{font-size:12px;font-weight:700;margin-bottom:2px}
+.ns{font-size:10px;font-weight:500;color:var(--t2);line-height:1.4}
 
-.logo-name {
-  font-family: var(--serif);
-  font-size: 20px;
-  color: var(--text);
-  letter-spacing: -0.3px;
-}
+.n-teal{background:#EDFBF6;border-color:#B2EAD8}
+.n-teal .nt{color:#065C40}
+.n-blue{background:#EBF3FD;border-color:#B5D4F4}
+.n-blue .nt{color:#0C447C}
+.n-coral{background:#FEF0EC;border-color:#F9C4B4}
+.n-coral .nt{color:#8C2D15}
+.n-amber{background:#FEF6E4;border-color:#F5DFA0}
+.n-amber .nt{color:#7A4B0A}
 
-.header h1 {
-  font-family: var(--serif);
-  font-size: clamp(32px, 5vw, 48px);
-  font-weight: 400;
-  letter-spacing: -1px;
-  line-height: 1.1;
-  color: var(--text);
-  margin-bottom: 12px;
-}
+/* BADGE */
+.badge{display:inline-block;font-size:9px;font-weight:700;padding:2px 6px;border-radius:4px;margin-top:5px}
+.b-neg{background:rgba(196,5,5,0.07);color:var(--red);border:1px solid rgba(196,5,5,0.13)}
+.b-ok{background:rgba(97,209,157,0.1);color:#269F66;border:1px solid rgba(97,209,157,0.18)}
+.b-muted{background:var(--neu100);color:var(--t3);border:1px solid var(--brd)}
 
-.header h1 em {
-  font-style: italic;
-  color: var(--purple-light);
-}
+/* KPI PANEL — caché par défaut, révélé au toggle */
+.kpi-panel{overflow:hidden;max-height:0;transition:max-height .3s ease,opacity .3s ease,margin-top .3s ease;opacity:0;margin-top:0}
+.kpis-open .kpi-panel{max-height:180px;opacity:1;margin-top:6px}
+.kpi-sep{border:none;border-top:1px solid rgba(0,0,0,0.07);margin:4px 0}
+.kpi-section-lbl{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.6px;color:var(--t3);margin-bottom:3px;margin-top:5px}
+.kpi-section-lbl:first-child{margin-top:0}
+.kpi-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:2px}
+.kpi-lbl{font-size:9px;font-weight:600;text-transform:uppercase;letter-spacing:0.4px;color:var(--t3)}
+.kpi-val{font-size:11px;font-weight:700}
+.kv-pos{color:#269F66}
+.kv-neg{color:var(--red)}
+.kv-muted{color:var(--t3)}
 
-.header-sub {
-  font-size: 14px;
-  color: var(--text2);
-  font-weight: 300;
-  letter-spacing: 0.2px;
-}
+/* L2 */
+.node-l2{background:var(--white);border-color:var(--brd);padding:9px 10px}
+.node-l2 .nt{font-size:11px;font-weight:600;color:var(--t1)}
+.node-l2 .ns{font-size:9px;color:var(--t3)}
 
-.formula-pill {
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  background: var(--surface);
-  border: 1px solid var(--border2);
-  border-radius: 100px;
-  padding: 10px 20px;
-  margin-top: 20px;
-  font-size: 13px;
-  color: var(--text2);
-  font-weight: 300;
-}
+/* TOGGLE BTN */
+.toggle-row{display:flex;justify-content:flex-end;flex-shrink:0;padding-top:2px}
+.toggle-btn{background:var(--white);border:1px solid var(--brd);border-radius:6px;padding:5px 12px;font-family:var(--f);font-size:10px;font-weight:600;color:var(--t2);cursor:pointer;display:flex;align-items:center;gap:5px;transition:all .15s}
+.toggle-btn:hover{border-color:var(--vio200);color:var(--vio);background:var(--vio25)}
+.toggle-btn svg{width:10px;height:10px;transition:transform .25s}
+.kpis-open .toggle-btn svg{transform:rotate(180deg)}
 
-.formula-pill strong { color: var(--text); font-weight: 500; }
-.formula-pill .op { color: var(--text3); }
-.formula-pill .gte { color: var(--green); font-weight: 500; }
-
-/* KPI STRIP */
-.kpi-strip {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 10px;
-  margin-bottom: 48px;
-}
-
-.kpi {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 16px;
-  transition: border-color 0.2s;
-}
-.kpi:hover { border-color: var(--border2); }
-
-.kpi-val {
-  font-family: var(--serif);
-  font-size: 28px;
-  font-weight: 400;
-  line-height: 1;
-  margin-bottom: 6px;
-}
-
-.kpi-label { font-size: 11px; color: var(--text3); font-weight: 400; text-transform: uppercase; letter-spacing: 0.8px; }
-
-/* TREE */
-.tree { display: flex; flex-direction: column; align-items: center; gap: 0; }
-
-/* Connector SVG */
-.conn { width: 100%; height: 40px; display: block; }
-
-/* Root node */
-.node-root {
-  display: block;
-  text-decoration: none;
-  background: var(--purple-dim);
-  border: 1px solid var(--purple);
-  border-radius: 16px;
-  padding: 20px 32px;
-  text-align: center;
-  cursor: pointer;
-  transition: all 0.2s;
-  min-width: 300px;
-}
-.node-root:hover { background: rgba(124,110,245,0.25); transform: translateY(-2px); box-shadow: 0 8px 32px rgba(124,110,245,0.2); }
-.node-root .nt { font-family: var(--serif); font-size: 18px; color: var(--purple-light); letter-spacing: -0.3px; }
-.node-root .ns { font-size: 12px; color: var(--text3); margin-top: 4px; }
-
-/* Level 1 */
-.level1 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; width: 100%; }
-
-.node-l1 {
-  display: block;
-  text-decoration: none;
-  border-radius: 14px;
-  padding: 18px 16px;
-  cursor: pointer;
-  transition: all 0.2s;
-  border: 1px solid;
-  position: relative;
-  overflow: hidden;
-}
-.node-l1::after {
-  content: '↗';
-  position: absolute;
-  top: 12px; right: 12px;
-  font-size: 11px;
-  opacity: 0;
-  transition: opacity 0.2s;
-}
-.node-l1:hover::after { opacity: 0.6; }
-.node-l1:hover { transform: translateY(-3px); }
-
-.node-l1.teal { background: var(--teal-dim); border-color: rgba(62,207,170,0.3); }
-.node-l1.teal:hover { box-shadow: 0 8px 24px rgba(62,207,170,0.15); }
-.node-l1.blue { background: var(--blue-dim); border-color: rgba(92,164,232,0.3); }
-.node-l1.blue:hover { box-shadow: 0 8px 24px rgba(92,164,232,0.15); }
-.node-l1.coral { background: var(--coral-dim); border-color: rgba(240,112,87,0.3); }
-.node-l1.coral:hover { box-shadow: 0 8px 24px rgba(240,112,87,0.15); }
-.node-l1.amber { background: var(--amber-dim); border-color: rgba(240,180,41,0.3); }
-.node-l1.amber:hover { box-shadow: 0 8px 24px rgba(240,180,41,0.15); }
-
-.nt { font-weight: 500; font-size: 13px; line-height: 1.3; }
-.ns { font-size: 11px; color: var(--text3); margin-top: 4px; line-height: 1.4; }
-
-.node-l1.teal .nt { color: var(--teal); }
-.node-l1.blue .nt { color: var(--blue); }
-.node-l1.coral .nt { color: var(--coral); }
-.node-l1.amber .nt { color: var(--amber); }
-
-.badge {
-  display: inline-block;
-  font-size: 10px;
-  font-weight: 500;
-  padding: 2px 8px;
-  border-radius: 100px;
-  margin-top: 8px;
-}
-.badge-neg { background: rgba(226,75,74,0.15); color: #F09595; border: 1px solid rgba(226,75,74,0.2); }
-.badge-ok { background: rgba(62,207,142,0.12); color: #3ECF8E; border: 1px solid rgba(62,207,142,0.2); }
-.badge-pending { background: rgba(139,143,168,0.1); color: var(--text3); border: 1px solid var(--border); }
-
-/* Level 2 */
-.level2 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; width: 100%; }
-
-.node-l2 {
-  display: block;
-  text-decoration: none;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  padding: 14px;
-  transition: all 0.2s;
-  position: relative;
-}
-.node-l2:hover { border-color: var(--border2); background: var(--surface2); transform: translateY(-2px); }
-.node-l2 .nt { font-size: 12px; font-weight: 500; color: var(--text); }
-.node-l2 .ns { font-size: 10px; color: var(--text3); margin-top: 3px; }
-
-/* Section drill */
-.drill-section { margin-top: 8px; width: 100%; }
-.drill-title {
-  font-size: 10px;
-  font-weight: 400;
-  letter-spacing: 1px;
-  text-transform: uppercase;
-  color: var(--text3);
-  margin-bottom: 8px;
-  padding-left: 2px;
-}
-
-/* Cap link */
-.cap-link {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  margin-top: 40px;
-  text-decoration: none;
-  color: var(--text3);
-  font-size: 12px;
-  font-weight: 300;
-  transition: color 0.2s;
-}
-.cap-link:hover { color: var(--text2); }
-.cap-link svg { width: 14px; height: 14px; opacity: 0.5; }
-
-/* Period badge */
-.period {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  background: var(--surface2);
-  border: 1px solid var(--border);
-  border-radius: 6px;
-  padding: 5px 12px;
-  font-size: 11px;
-  color: var(--text3);
-  margin-bottom: 8px;
-}
-.period-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--amber); }
-
-/* Animations */
-@keyframes fadeUp { from { opacity:0; transform:translateY(16px); } to { opacity:1; transform:translateY(0); } }
-.header { animation: fadeUp 0.6s ease both; }
-.kpi-strip { animation: fadeUp 0.6s 0.1s ease both; }
-.tree { animation: fadeUp 0.6s 0.2s ease both; }
+/* CAP LINK */
+.caplink{text-align:center;font-size:10px;font-weight:500;color:var(--t3);flex-shrink:0;padding-bottom:2px}
+.caplink a{color:var(--t3);text-decoration:none}
+.caplink a:hover{color:var(--vio)}
 </style>
 </head>
 <body>
 <div class="page">
 
-  <header class="header">
-    <div class="logo-row">
+  <!-- TOP BAR -->
+  <div class="topbar">
+    <div class="logo">
       <div class="logo-mark">
-        <svg viewBox="0 0 18 18" fill="none"><path d="M3 9h3l2-6 4 12 2-6h3" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <svg viewBox="0 0 15 15" fill="none"><path d="M1.5 7.5h3l1.5-4.5 4 9 1.5-4.5h3" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
       </div>
-      <span class="logo-name">Qovoltis</span>
+      <div>
+        <div class="logo-name">Qovoltis</div>
+        <div class="logo-sub">Dashboard FP&A · Codir</div>
+      </div>
     </div>
-    <h1>Dashboard <em>FP&A</em><br>Codir</h1>
-    <p class="header-sub">Pilotage vers le breakeven EBITDA · Sans levée supplémentaire</p>
-    <div>
+    <div class="topbar-right">
       <div class="formula-pill">
-        <strong>EBITDA</strong>
-        <span class="op">=</span>
-        <span>Marge déploiement</span>
-        <span class="op">+</span>
-        <span>Marge Run</span>
-        <span class="op">−</span>
-        <span>Frais généraux</span>
-        <span class="gte">≥ 0</span>
+        <strong>EBITDA</strong><span class="op">=</span>Marge déploiement<span class="op">+</span>Marge Run<span class="op">−</span>Frais généraux<span class="gte">≥ 0</span>
       </div>
-    </div>
-  </header>
-
-  <div class="kpi-strip">
-    <div class="kpi">
-      <div class="kpi-val" style="color:var(--teal)">23</div>
-      <div class="kpi-label">Chantiers livrés</div>
-    </div>
-    <div class="kpi">
-      <div class="kpi-val" style="color:var(--blue)">65</div>
-      <div class="kpi-label">Bornes déployées</div>
-    </div>
-    <div class="kpi">
-      <div class="kpi-val" style="color:var(--amber)">236 k€</div>
-      <div class="kpi-label">CA déploiement</div>
-    </div>
-    <div class="kpi">
-      <div class="kpi-val" style="color:var(--red)">~0.4%</div>
-      <div class="kpi-label">Marge globale</div>
+      <div class="period-tag">Jan / Fév 2026</div>
     </div>
   </div>
 
-  <div style="display:flex;justify-content:center;margin-bottom:16px">
-    <div class="period"><div class="period-dot"></div>Jan / Fév 2026</div>
-  </div>
+  <!-- TREE -->
+  <div class="tree" id="tree">
 
-  <div class="tree">
+    <!-- ROOT -->
+    <div class="level level-root">
+      <a class="node node-root" href="https://www.notion.so/33deb69768dc8166b8c1d9856cc86946" target="_blank">
+        <div class="nt">Objectif breakeven EBITDA</div>
+        <div class="ns">Sans levée supplémentaire · Page racine dashboard</div>
+        <span class="node-arr">↗</span>
+      </a>
+    </div>
 
-    <a class="node-root" href="https://www.notion.so/33deb69768dc8166b8c1d9856cc86946" target="_blank">
-      <div class="nt">Objectif breakeven EBITDA</div>
-      <div class="ns">Page racine du dashboard · Cliquer pour ouvrir dans Notion</div>
-    </a>
+    <svg class="conn" id="svg-r" style="height:24px"></svg>
 
-    <svg class="conn" viewBox="0 0 900 40" preserveAspectRatio="none">
-      <line x1="450" y1="0" x2="113" y2="40" stroke="rgba(124,110,245,0.25)" stroke-width="1"/>
-      <line x1="450" y1="0" x2="337" y2="40" stroke="rgba(124,110,245,0.25)" stroke-width="1"/>
-      <line x1="450" y1="0" x2="563" y2="40" stroke="rgba(124,110,245,0.25)" stroke-width="1"/>
-      <line x1="450" y1="0" x2="787" y2="40" stroke="rgba(124,110,245,0.25)" stroke-width="1"/>
-    </svg>
+    <!-- L1 -->
+    <div class="level level-l1" id="l1">
 
-    <div class="level1">
-      <a class="node-l1 teal" href="https://www.notion.so/33deb69768dc810086d0d9a65b7eaf68" target="_blank">
+      <a class="node n-teal" href="https://www.notion.so/33deb69768dc810086d0d9a65b7eaf68" target="_blank">
         <div class="nt">Marge déploiement</div>
-        <div class="ns">Chantiers livrés & en cours · 236 k€ CA</div>
-        <div><span class="badge badge-neg">0.4% marge</span></div>
+        <div class="ns">Chantiers livrés & en cours</div>
+        <span class="badge b-neg">~0.4% marge</span>
+        <div class="kpi-panel">
+          <div class="kpi-section-lbl">Actuel</div>
+          <div class="kpi-row"><span class="kpi-lbl">CA livré</span><span class="kpi-val">236 k€</span></div>
+          <div class="kpi-row"><span class="kpi-lbl">Marge k€</span><span class="kpi-val kv-neg">+1 k€</span></div>
+          <div class="kpi-row"><span class="kpi-lbl">Marge %</span><span class="kpi-val kv-neg">~0.4%</span></div>
+          <hr class="kpi-sep">
+          <div class="kpi-section-lbl">Projeté</div>
+          <div class="kpi-row"><span class="kpi-lbl">Backlog signé</span><span class="kpi-val kv-muted">—</span></div>
+          <div class="kpi-row"><span class="kpi-lbl">Pipeline (CA prév.)</span><span class="kpi-val kv-muted">—</span></div>
+          <div class="kpi-row"><span class="kpi-lbl">Marge prév.</span><span class="kpi-val kv-muted">—</span></div>
+        </div>
+        <span class="node-arr">↗</span>
       </a>
-      <a class="node-l1 blue" href="https://www.notion.so/33deb69768dc81d2a952ff9834b2b1f3" target="_blank">
+
+      <a class="node n-blue" href="https://www.notion.so/33deb69768dc81d2a952ff9834b2b1f3" target="_blank">
         <div class="nt">Marge Run</div>
-        <div class="ns">ARR · MRR · Coûts ops parc bornes</div>
-        <div><span class="badge badge-pending">À alimenter</span></div>
+        <div class="ns">Revenus récurrents · coûts ops</div>
+        <span class="badge b-muted">À alimenter</span>
+        <div class="kpi-panel">
+          <div class="kpi-section-lbl">Actuel</div>
+          <div class="kpi-row"><span class="kpi-lbl">ARR</span><span class="kpi-val kv-muted">—</span></div>
+          <div class="kpi-row"><span class="kpi-lbl">MRR</span><span class="kpi-val kv-muted">—</span></div>
+          <div class="kpi-row"><span class="kpi-lbl">Marge Run</span><span class="kpi-val kv-muted">—</span></div>
+          <hr class="kpi-sep">
+          <div class="kpi-section-lbl">Projeté</div>
+          <div class="kpi-row"><span class="kpi-lbl">ARR projeté</span><span class="kpi-val kv-muted">—</span></div>
+          <div class="kpi-row"><span class="kpi-lbl">Bornes cumulées</span><span class="kpi-val kv-muted">—</span></div>
+        </div>
+        <span class="node-arr">↗</span>
       </a>
-      <a class="node-l1 coral" href="https://www.notion.so/33deb69768dc81b697bbd5ef7aded8f1" target="_blank">
+
+      <a class="node n-coral" href="https://www.notion.so/33deb69768dc81b697bbd5ef7aded8f1" target="_blank">
         <div class="nt">Frais généraux</div>
-        <div class="ns">Structure fixe & variable · RH · IT</div>
-        <div><span class="badge badge-pending">À alimenter</span></div>
+        <div class="ns">Structure fixe & variable</div>
+        <span class="badge b-muted">À alimenter</span>
+        <div class="kpi-panel">
+          <div class="kpi-section-lbl">Actuel</div>
+          <div class="kpi-row"><span class="kpi-lbl">FG fixes</span><span class="kpi-val kv-muted">—</span></div>
+          <div class="kpi-row"><span class="kpi-lbl">FG variables</span><span class="kpi-val kv-muted">—</span></div>
+          <div class="kpi-row"><span class="kpi-lbl">% CA total</span><span class="kpi-val kv-muted">—</span></div>
+          <hr class="kpi-sep">
+          <div class="kpi-section-lbl">Projeté</div>
+          <div class="kpi-row"><span class="kpi-lbl">FG projeté</span><span class="kpi-val kv-muted">—</span></div>
+        </div>
+        <span class="node-arr">↗</span>
       </a>
-      <a class="node-l1 amber" href="https://www.notion.so/33deb69768dc812b88c7ffdd4751a3da" target="_blank">
+
+      <a class="node n-amber" href="https://www.notion.so/33deb69768dc812b88c7ffdd4751a3da" target="_blank">
         <div class="nt">Cash & Runway</div>
-        <div class="ns">Position cash · Burn rate · Autonomie</div>
-        <div><span class="badge badge-pending">À alimenter</span></div>
+        <div class="ns">Autonomie sans levée</div>
+        <span class="badge b-muted">À alimenter</span>
+        <div class="kpi-panel">
+          <div class="kpi-section-lbl">Actuel</div>
+          <div class="kpi-row"><span class="kpi-lbl">Cash dispo</span><span class="kpi-val kv-muted">—</span></div>
+          <div class="kpi-row"><span class="kpi-lbl">Burn / mois</span><span class="kpi-val kv-muted">—</span></div>
+          <hr class="kpi-sep">
+          <div class="kpi-section-lbl">Projeté</div>
+          <div class="kpi-row"><span class="kpi-lbl">Runway</span><span class="kpi-val kv-muted">— mois</span></div>
+          <div class="kpi-row"><span class="kpi-lbl">Date breakeven</span><span class="kpi-val kv-muted">—</span></div>
+        </div>
+        <span class="node-arr">↗</span>
       </a>
+
     </div>
 
-    <svg class="conn" viewBox="0 0 900 40" preserveAspectRatio="none">
-      <line x1="113" y1="0" x2="113" y2="40" stroke="rgba(62,207,170,0.2)" stroke-width="1"/>
-      <line x1="113" y1="0" x2="337" y2="40" stroke="rgba(62,207,170,0.2)" stroke-width="1"/>
-      <line x1="113" y1="0" x2="563" y2="40" stroke="rgba(62,207,170,0.2)" stroke-width="1"/>
-      <line x1="113" y1="0" x2="787" y2="40" stroke="rgba(62,207,170,0.2)" stroke-width="1"/>
-    </svg>
+    <svg class="conn" id="svg-l1" style="height:20px"></svg>
 
-    <div class="level2">
-      <a class="node-l2" href="https://www.notion.so/d5471532a335401dabac2cef924b6896?v=ff4fccd4-e1a3-4dd3-905d-417a3c321500" target="_blank">
+    <!-- L2 -->
+    <div class="level level-l2" id="l2">
+      <a class="node node-l2" href="https://www.notion.so/d5471532a335401dabac2cef924b6896?v=ff4fccd4-e1a3-4dd3-905d-417a3c321500" target="_blank">
         <div class="nt">Tous les chantiers</div>
-        <div class="ns">23 livrés · tri marge ASC</div>
+        <div class="ns">23 livrés · marge ASC</div>
+        <span class="node-arr">↗</span>
       </a>
-      <a class="node-l2" href="https://www.notion.so/d5471532a335401dabac2cef924b6896?v=33deb697-68dc-817a-83df-000cae913df5" target="_blank">
+      <a class="node node-l2" href="https://www.notion.so/d5471532a335401dabac2cef924b6896?v=33deb697-68dc-817a-83df-000cae913df5" target="_blank">
         <div class="nt">Marge négative</div>
         <div class="ns">8 chantiers à risque</div>
-        <div><span class="badge badge-neg" style="font-size:9px">filtre actif</span></div>
+        <span class="badge b-neg" style="font-size:8px;margin-top:3px">filtre actif</span>
+        <span class="node-arr">↗</span>
       </a>
-      <a class="node-l2" href="https://www.notion.so/26304e2d38634b159bcc8aeec32577f3?v=9c4dcc9f-57a3-4bbc-996d-4a114605e403" target="_blank">
+      <a class="node node-l2" href="https://www.notion.so/d5471532a335401dabac2cef924b6896?v=33deb697-68dc-81e4-a23c-000ca466f630" target="_blank">
+        <div class="nt">Par segment</div>
+        <div class="ns">B2B · Hôtels · MI · Copro</div>
+        <span class="node-arr">↗</span>
+      </a>
+      <a class="node node-l2" href="https://www.notion.so/d5471532a335401dabac2cef924b6896?v=33deb697-68dc-81ec-89b7-000c8a861af1" target="_blank">
+        <div class="nt">Par complexité</div>
+        <div class="ns">Génie civil vs standard</div>
+        <span class="node-arr">↗</span>
+      </a>
+      <a class="node node-l2" href="https://www.notion.so/26304e2d38634b159bcc8aeec32577f3?v=9c4dcc9f-57a3-4bbc-996d-4a114605e403" target="_blank">
         <div class="nt">Pipeline / stade</div>
-        <div class="ns">Chantier étude · Travaux · Final.</div>
+        <div class="ns">Étude · Travaux · Final.</div>
+        <span class="node-arr">↗</span>
       </a>
-      <a class="node-l2" href="https://www.notion.so/26304e2d38634b159bcc8aeec32577f3?v=33deb697-68dc-81f7-b018-000cf9970f74" target="_blank">
+      <a class="node node-l2" href="https://www.notion.so/26304e2d38634b159bcc8aeec32577f3?v=33deb697-68dc-81f7-b018-000cf9970f74" target="_blank">
         <div class="nt">Alertes pipeline</div>
         <div class="ns">B2B −20% · −25%</div>
-        <div><span class="badge badge-neg" style="font-size:9px">marge forecasted</span></div>
+        <span class="badge b-neg" style="font-size:8px;margin-top:3px">marge neg.</span>
+        <span class="node-arr">↗</span>
       </a>
     </div>
 
   </div>
 
-  <a class="cap-link" href="https://www.notion.so/33deb69768dc812cb6bce9edbdf13865" target="_blank">
-    <svg viewBox="0 0 14 14" fill="none"><path d="M2 7h10M7 2l5 5-5 5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-    Documentation & capitalisation
-  </a>
+  <!-- TOGGLE + CAP -->
+  <div style="display:flex;align-items:center;justify-content:space-between;flex-shrink:0">
+    <div class="caplink"><a href="https://www.notion.so/33deb69768dc812cb6bce9edbdf13865" target="_blank">📖 Capitalisation</a></div>
+    <div class="toggle-row" id="toggleRow">
+      <button class="toggle-btn" onclick="toggleKPIs()">
+        <span id="toggleLabel">Afficher KPIs</span>
+        <svg viewBox="0 0 10 10" fill="none"><path d="M2 3.5L5 6.5L8 3.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+    </div>
+  </div>
 
 </div>
+
+<script>
+let kpisOpen = false;
+
+function toggleKPIs() {
+  kpisOpen = !kpisOpen;
+  document.querySelectorAll('#l1 .node').forEach(n => {
+    n.classList.toggle('kpis-open', kpisOpen);
+  });
+  document.querySelector('#toggleRow .toggle-btn').classList.toggle('kpis-open', kpisOpen);
+  document.getElementById('toggleLabel').textContent = kpisOpen ? 'Masquer KPIs' : 'Afficher KPIs';
+  setTimeout(drawConnectors, 320);
+}
+
+function midX(el, ref) {
+  const er = el.getBoundingClientRect();
+  const rr = ref.getBoundingClientRect();
+  return er.left + er.width / 2 - rr.left;
+}
+
+function drawConn(svgEl, fromEls, toEls, color) {
+  const sr = svgEl.getBoundingClientRect();
+  const w = sr.width, h = sr.height;
+  svgEl.setAttribute('viewBox', `0 0 ${w} ${h}`);
+  svgEl.innerHTML = '';
+  fromEls.forEach(f => {
+    const x1 = midX(f, svgEl);
+    toEls.forEach(t => {
+      const x2 = midX(t, svgEl);
+      const p = document.createElementNS('http://www.w3.org/2000/svg','path');
+      p.setAttribute('d', `M${x1} 0 C${x1} ${h} ${x2} 0 ${x2} ${h}`);
+      p.setAttribute('fill','none');
+      p.setAttribute('stroke', color);
+      p.setAttribute('stroke-width','1');
+      svgEl.appendChild(p);
+    });
+  });
+}
+
+function drawConnectors() {
+  const root = document.querySelector('.node-root');
+  const l1 = Array.from(document.querySelectorAll('#l1 .node'));
+  const l2 = Array.from(document.querySelectorAll('#l2 .node'));
+  drawConn(document.getElementById('svg-r'),  [root], l1, '#D2CBFF');
+  drawConn(document.getElementById('svg-l1'), [l1[0]], l2, '#B2EAD8');
+}
+
+requestAnimationFrame(() => setTimeout(drawConnectors, 60));
+window.addEventListener('resize', drawConnectors);
+</script>
 </body>
 </html>
