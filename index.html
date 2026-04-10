@@ -10,16 +10,13 @@
   --bg:#F5F6FA;--white:#FFFFFF;
   --t1:#191919;--t2:#787781;--t3:#A2A1A8;
   --brd:#E9E9EB;--brd2:#D6D6D9;
-  --vio:#5B3EFF;--vio100:#E9E6FF;--vio200:#D2CBFF;--vio600:#462FC3;
-  --grn:#61D19D;--grn2:#269F66;--red:#C40505;--warn:#FF6C00;
-  --neu100:#F3F3F4;
+  --vio:#5B3EFF;--vio100:#E9E6FF;--vio200:#D2CBFF;
+  --grn2:#269F66;--red:#C40505;
   --f:'Montserrat',sans-serif;
 }
 *{margin:0;padding:0;box-sizing:border-box}
 html,body{height:100%;background:var(--bg);font-family:var(--f);font-size:13px;color:var(--t1);font-variant-numeric:tabular-nums;overflow:hidden}
 .page{display:flex;flex-direction:column;height:100vh;padding:10px 16px 8px;gap:7px}
-
-/* TOPBAR */
 .topbar{display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
 .logo{display:flex;align-items:center;gap:8px}
 .logo-mark{width:24px;height:24px;background:var(--vio);border-radius:6px;display:flex;align-items:center;justify-content:center}
@@ -33,43 +30,31 @@ html,body{height:100%;background:var(--bg);font-family:var(--f);font-size:13px;c
 .month-wrap{display:flex;align-items:center;gap:5px}
 .month-lbl{font-size:9px;font-weight:600;color:var(--t3)}
 .month-sel{background:var(--vio100);border:1px solid var(--vio200);border-radius:20px;padding:3px 10px;font-family:var(--f);font-size:10px;font-weight:700;color:var(--vio);cursor:pointer;appearance:none}
-
-/* DIVIDER */
 .divider{display:flex;align-items:center;gap:8px;flex-shrink:0}
 .divider::before,.divider::after{content:'';flex:1;border-top:1px dashed var(--brd2)}
 .divider-lbl{font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;color:var(--t3);white-space:nowrap}
-
-/* SECTION GRID — chaque section = 3 colonnes de piliers */
 .section{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;flex-shrink:0}
-
-/* PILIER = header cliquable + grille de bulles KPI en dessous */
 .pilier{display:flex;flex-direction:column;gap:5px}
-
-/* HEADER PILIER — cliquable → ouvre Notion */
 .pilier-header{display:flex;align-items:center;justify-content:space-between;background:var(--white);border:1px solid var(--brd);border-radius:10px;padding:8px 12px;cursor:pointer;text-decoration:none;transition:border-color .15s,box-shadow .15s;position:relative}
 .pilier-header::before{content:'';position:absolute;top:0;left:0;right:0;height:2.5px;border-radius:10px 10px 0 0}
-.ph-teal::before{background:var(--grn)}
+.ph-teal::before{background:#2ED3B7}
 .ph-blue::before{background:#155EEF}
 .ph-purple::before{background:#A569BD}
 .ph-pink::before{background:#F63D68}
-.ph-coral::before{background:var(--warn)}
+.ph-coral::before{background:#FF6C00}
 .ph-amber::before{background:#FFC868}
 .pilier-header:hover{border-color:var(--brd2);box-shadow:0 2px 8px rgba(0,0,0,0.06)}
 .ph-title{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.7px;color:var(--t1)}
 .ph-badge{font-size:8px;font-weight:700;padding:2px 6px;border-radius:10px}
 .b-neg{background:rgba(196,5,5,0.07);color:var(--red);border:1px solid rgba(196,5,5,0.13)}
 .b-ok{background:rgba(97,209,157,0.1);color:var(--grn2);border:1px solid rgba(97,209,157,0.2)}
-.b-muted{background:var(--neu100);color:var(--t3);border:1px solid var(--brd)}
+.b-muted{background:#F3F3F4;color:var(--t3);border:1px solid var(--brd)}
 .ph-arrow{font-size:9px;color:var(--t3);opacity:0;transition:opacity .15s;position:absolute;right:10px;top:50%;transform:translateY(-50%)}
 .pilier-header:hover .ph-arrow{opacity:1}
-
-/* GRILLE DE BULLES KPI */
 .kpi-grid{display:grid;gap:4px}
 .kpi-grid-1{grid-template-columns:1fr}
 .kpi-grid-2{grid-template-columns:1fr 1fr}
 .kpi-grid-3{grid-template-columns:1fr 1fr 1fr}
-
-/* BULLE KPI individuelle */
 .kpi-bubble{background:var(--white);border:1px solid var(--brd);border-radius:8px;padding:8px 10px;display:flex;flex-direction:column;gap:2px}
 .kpi-bubble.kpi-big{padding:10px 12px}
 .kpi-lbl{font-size:8px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;color:var(--t3)}
@@ -81,16 +66,12 @@ html,body{height:100%;background:var(--bg);font-family:var(--f);font-size:13px;c
 .kpi-sub{font-size:9px;font-weight:500;color:var(--t3);margin-top:1px}
 .kpi-sub.neg{color:var(--red)}
 .kpi-sub.pos{color:var(--grn2)}
-
-/* TEAL variant bulles */
 .bv-teal .kpi-bubble{background:#EDFBF6;border-color:#B2EAD8}
 .bv-blue .kpi-bubble{background:#EBF3FD;border-color:#B5D4F4}
 .bv-purple .kpi-bubble{background:#F5EEF8;border-color:#D7BDE2}
 .bv-pink .kpi-bubble{background:#FEF0F3;border-color:#FAB8C8}
 .bv-coral .kpi-bubble{background:#FEF3EC;border-color:#FBBF99}
 .bv-amber .kpi-bubble{background:#FFFAEB;border-color:#FFE9A0}
-
-/* FOOTER */
 .footer{display:flex;justify-content:center;gap:16px;flex-shrink:0}
 .footer a{font-size:9px;font-weight:500;color:var(--t3);text-decoration:none}
 .footer a:hover{color:var(--vio)}
@@ -99,7 +80,6 @@ html,body{height:100%;background:var(--bg);font-family:var(--f);font-size:13px;c
 <body>
 <div class="page">
 
-  <!-- TOPBAR -->
   <div class="topbar">
     <div class="logo">
       <div class="logo-mark">
@@ -114,20 +94,17 @@ html,body{height:100%;background:var(--bg);font-family:var(--f);font-size:13px;c
       <span class="month-lbl">Période</span>
       <select class="month-sel" id="msel" onchange="onMonth()">
         <option value="2026-01">Jan / Fév 2026</option>
-        <option value="2026-03">Mars 2026</option>
-        <option value="2026-04">Avril 2026</option>
+        <option value="2026-03" selected>Mars 2026</option>
       </select>
     </div>
   </div>
 
-  <!-- DIMENSION ACTUELLE -->
   <div class="divider"><span class="divider-lbl">Dimension actuelle</span></div>
 
   <div class="section">
 
-    <!-- MARGE OPS ACTUELLE -->
     <div class="pilier bv-teal">
-      <a class="pilier-header ph-teal" href="#" onclick="window.top.location.href='https://www.notion.so/33deb69768dc819ea1ace37387161274'; return false;">
+      <a class="pilier-header ph-teal" href="https://www.notion.so/33deb69768dc819ea1ace37387161274" target="_blank">
         <span class="ph-title">Marge ops actuelle</span>
         <span class="ph-badge b-neg" id="b-marge">~0.4%</span>
         <span class="ph-arrow">↗</span>
@@ -135,14 +112,14 @@ html,body{height:100%;background:var(--bg);font-family:var(--f);font-size:13px;c
       <div class="kpi-grid kpi-grid-1">
         <div class="kpi-bubble kpi-big">
           <div class="kpi-lbl">CA livré</div>
-          <div class="kpi-val big" id="kpi-ca">236 k€</div>
-          <div class="kpi-sub neg">budget 280 k€ · écart −44</div>
+          <div class="kpi-val big neg" id="kpi-ca">175 k€</div>
+          <div class="kpi-sub neg" id="kpi-ca-sub">budget 411 k€ · écart −236</div>
         </div>
       </div>
       <div class="kpi-grid kpi-grid-3">
         <div class="kpi-bubble">
           <div class="kpi-lbl">Volume déployé</div>
-          <div class="kpi-val" id="kpi-bornes">65</div>
+          <div class="kpi-val" id="kpi-bornes">55</div>
           <div class="kpi-sub">bornes</div>
         </div>
         <div class="kpi-bubble">
@@ -152,15 +129,14 @@ html,body{height:100%;background:var(--bg);font-family:var(--f);font-size:13px;c
         </div>
         <div class="kpi-bubble">
           <div class="kpi-lbl">Nb chantiers</div>
-          <div class="kpi-val" id="kpi-chantiers">23</div>
-          <div class="kpi-sub">livrés</div>
+          <div class="kpi-val" id="kpi-ch">26</div>
+          <div class="kpi-sub" id="kpi-ch-sub">8 à marge nég.</div>
         </div>
       </div>
     </div>
 
-    <!-- RUN ACTUEL -->
     <div class="pilier bv-purple">
-      <a class="pilier-header ph-purple" href="#" onclick="window.top.location.href='https://www.notion.so/33deb69768dc8128bf70df55373421df'; return false;">
+      <a class="pilier-header ph-purple" href="https://www.notion.so/33deb69768dc8128bf70df55373421df" target="_blank">
         <span class="ph-title">Marge Run actuelle</span>
         <span class="ph-badge b-muted">À alimenter</span>
         <span class="ph-arrow">↗</span>
@@ -191,9 +167,8 @@ html,body{height:100%;background:var(--bg);font-family:var(--f);font-size:13px;c
       </div>
     </div>
 
-    <!-- FRAIS GÉNÉRAUX -->
     <div class="pilier bv-coral">
-      <a class="pilier-header ph-coral" href="#" onclick="window.top.location.href='https://www.notion.so/33deb69768dc81208fa8fd9a6298300f'; return false;">
+      <a class="pilier-header ph-coral" href="https://www.notion.so/33deb69768dc81208fa8fd9a6298300f" target="_blank">
         <span class="ph-title">Frais généraux actuels</span>
         <span class="ph-badge b-muted">À alimenter</span>
         <span class="ph-arrow">↗</span>
@@ -226,14 +201,12 @@ html,body{height:100%;background:var(--bg);font-family:var(--f);font-size:13px;c
 
   </div>
 
-  <!-- DIMENSION PROJETÉE -->
   <div class="divider"><span class="divider-lbl">Dimension projetée</span></div>
 
   <div class="section">
 
-    <!-- MARGE FUTURE -->
     <div class="pilier bv-blue">
-      <a class="pilier-header ph-blue" href="#" onclick="window.top.location.href='https://www.notion.so/33deb69768dc81549b53f35c4452ceae'; return false;">
+      <a class="pilier-header ph-blue" href="https://www.notion.so/33deb69768dc81549b53f35c4452ceae" target="_blank">
         <span class="ph-title">Marge prév.</span>
         <span class="ph-badge b-muted">Backlog + pipe</span>
         <span class="ph-arrow">↗</span>
@@ -264,9 +237,8 @@ html,body{height:100%;background:var(--bg);font-family:var(--f);font-size:13px;c
       </div>
     </div>
 
-    <!-- RUN FUTUR -->
     <div class="pilier bv-pink">
-      <a class="pilier-header ph-pink" href="#" onclick="window.top.location.href='https://www.notion.so/33deb69768dc818d9d01ebaaf55324b0'; return false;">
+      <a class="pilier-header ph-pink" href="https://www.notion.so/33deb69768dc818d9d01ebaaf55324b0" target="_blank">
         <span class="ph-title">Marge Run cible</span>
         <span class="ph-badge b-muted">À alimenter</span>
         <span class="ph-arrow">↗</span>
@@ -292,18 +264,17 @@ html,body{height:100%;background:var(--bg);font-family:var(--f);font-size:13px;c
       </div>
     </div>
 
-    <!-- CASH & RUNWAY -->
     <div class="pilier bv-amber">
-      <a class="pilier-header ph-amber" href="#" onclick="window.top.location.href='https://www.notion.so/33deb69768dc814f914aeca826e46f34'; return false;">
+      <a class="pilier-header ph-amber" href="https://www.notion.so/33deb69768dc814f914aeca826e46f34" target="_blank">
         <span class="ph-title">Position & Runway</span>
         <span class="ph-badge b-muted">À alimenter</span>
         <span class="ph-arrow">↗</span>
       </a>
       <div class="kpi-grid kpi-grid-1">
         <div class="kpi-bubble kpi-big">
-          <div class="kpi-lbl">Position actuelle & Runway</div>
+          <div class="kpi-lbl">Cash disponible</div>
           <div class="kpi-val big muted">-- M€</div>
-          <div class="kpi-sub">cash disponible</div>
+          <div class="kpi-sub">position actuelle</div>
         </div>
       </div>
       <div class="kpi-grid kpi-grid-2">
@@ -323,28 +294,47 @@ html,body{height:100%;background:var(--bg);font-family:var(--f);font-size:13px;c
   </div>
 
   <div class="footer">
-    <a href="#" onclick="window.top.location.href='https://www.notion.so/33deb69768dc8166b8c1d9856cc86946'; return false;">🏠 Racine</a>
-    <a href="#" onclick="window.top.location.href='https://www.notion.so/b61bef3147f5499ba186e081c8a885d9'; return false;">📊 KPIs historisés</a>
-    <a href="#" onclick="window.top.location.href='https://www.notion.so/33deb69768dc812cb6bce9edbdf13865'; return false;">📖 Capitalisation</a>
+    <a href="https://www.notion.so/33deb69768dc8166b8c1d9856cc86946" target="_blank">🏠 Racine</a>
+    <a href="https://www.notion.so/b61bef3147f5499ba186e081c8a885d9" target="_blank">📊 KPIs historisés</a>
+    <a href="https://www.notion.so/33deb69768dc812cb6bce9edbdf13865" target="_blank">📖 Capitalisation</a>
   </div>
 
 </div>
 <script>
 const D={
-  "2026-01":{ca:"236 k€",caC:"",bornes:"65",mpct:"~0.4%",mpctC:"neg",mke:"+1 k€",ch:"23",bt:"~0.4%",bc:"b-neg"},
-  "2026-03":{ca:"-- k€",caC:"muted",bornes:"--",mpct:"--%",mpctC:"muted",mke:"-- k€",ch:"--",bt:"N/A",bc:"b-muted"},
-  "2026-04":{ca:"-- k€",caC:"muted",bornes:"--",mpct:"--%",mpctC:"muted",mke:"-- k€",ch:"--",bt:"N/A",bc:"b-muted"}
+  "2026-01":{
+    ca:"236 k€",caC:"neg",caSub:"budget 280 k€ · écart −44",
+    bornes:"65",mpct:"~0.4%",mpctC:"neg",mke:"+1 k€",mkeC:"neg",
+    ch:"23",chSub:"8 à marge nég.",
+    bt:"~0.4%",bc:"b-neg"
+  },
+  "2026-03":{
+    ca:"175 k€",caC:"neg",caSub:"budget 411 k€ · écart −236",
+    bornes:"55",mpct:"~0.4%",mpctC:"neg",mke:"+1 k€",mkeC:"neg",
+    ch:"26",chSub:"8 à marge nég.",
+    bt:"~0.4%",bc:"b-neg"
+  }
 };
-function sv(id,txt,cls){const e=document.getElementById(id);if(!e)return;e.textContent=txt;if(cls!==undefined){e.className=e.className.replace(/\b(neg|pos|muted|big)\b/g,'').trim().replace(/\s+/g,' ');if(cls)e.className+=' '+cls;}}
+function sv(id,txt,cls){
+  const e=document.getElementById(id);if(!e)return;
+  e.textContent=txt;
+  if(cls!==undefined){
+    const base=e.className.replace(/\b(neg|pos|muted|big)\b/g,'').trim().replace(/\s+/g,' ');
+    e.className=base+(cls?' '+cls:'');
+  }
+}
 function onMonth(){
-  const d=D[document.getElementById('msel').value]||D["2026-01"];
-  sv('kpi-ca',d.ca,d.caC?'big '+d.caC:'big');
+  const d=D[document.getElementById('msel').value]||D["2026-03"];
+  sv('kpi-ca',d.ca,'big '+d.caC);
+  sv('kpi-ca-sub',d.caSub,d.caC);
   sv('kpi-bornes',d.bornes,'');
   sv('kpi-mpct',d.mpct,d.mpctC);
-  sv('kpi-mke',d.mke,d.mpctC);
-  sv('kpi-chantiers',d.ch,'');
+  sv('kpi-mke',d.mke,d.mkeC);
+  sv('kpi-ch',d.ch,'');
+  sv('kpi-ch-sub',d.chSub,'');
   const b=document.getElementById('b-marge');b.textContent=d.bt;b.className='ph-badge '+d.bc;
 }
+// Init avec mars sélectionné par défaut
 </script>
 </body>
 </html>
