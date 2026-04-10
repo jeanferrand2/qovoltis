@@ -6,317 +6,345 @@
 <title>Qovoltis — Dashboard FP&A</title>
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-:root {
-  --white:#FFFFFF; --bg:#F5F6FA;
-  --t1:#191919; --t2:#787781; --t3:#A2A1A8;
-  --brd:#E9E9EB; --brd2:#D6D6D9;
-  --vio:#5B3EFF; --vio25:#FCFBFF; --vio100:#E9E6FF; --vio200:#D2CBFF; --vio300:#9B8AFF; --vio600:#462FC3; --vio700:#37269A;
-  --grn:#61D19D; --red:#C40505; --warn:#FF6C00;
-  --neu100:#F3F3F4; --neu200:#E9E9EB;
+:root{
+  --bg:#F5F6FA;--white:#FFFFFF;
+  --t1:#191919;--t2:#787781;--t3:#A2A1A8;
+  --brd:#E9E9EB;--brd2:#D6D6D9;
+  --vio:#5B3EFF;--vio100:#E9E6FF;--vio200:#D2CBFF;--vio600:#462FC3;
+  --grn:#61D19D;--grn2:#269F66;--red:#C40505;--warn:#FF6C00;
+  --neu100:#F3F3F4;
   --f:'Montserrat',sans-serif;
 }
 *{margin:0;padding:0;box-sizing:border-box}
 html,body{height:100%;background:var(--bg);font-family:var(--f);font-size:13px;color:var(--t1);font-variant-numeric:tabular-nums;overflow:hidden}
+.page{display:flex;flex-direction:column;height:100vh;padding:10px 16px 8px;gap:7px}
 
-.page{display:flex;flex-direction:column;height:100vh;padding:14px 18px 10px;gap:10px}
-
-/* TOP BAR */
+/* TOPBAR */
 .topbar{display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
 .logo{display:flex;align-items:center;gap:8px}
-.logo-mark{width:26px;height:26px;background:var(--vio);border-radius:7px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.logo-mark svg{width:15px;height:15px}
-.logo-name{font-weight:700;font-size:14px;letter-spacing:-0.3px}
-.logo-sub{font-size:10px;font-weight:500;color:var(--t3);margin-top:1px}
-.topbar-right{display:flex;align-items:center;gap:8px}
-.formula-pill{background:var(--white);border:1px solid var(--brd);border-radius:6px;padding:5px 11px;font-size:11px;font-weight:500;color:var(--t2);display:flex;align-items:center;gap:5px;white-space:nowrap}
+.logo-mark{width:24px;height:24px;background:var(--vio);border-radius:6px;display:flex;align-items:center;justify-content:center}
+.logo-mark svg{width:14px;height:14px}
+.logo-name{font-weight:700;font-size:13px;letter-spacing:-0.3px}
+.logo-sub{font-size:9px;font-weight:500;color:var(--t3);margin-top:1px}
+.formula-pill{background:var(--white);border:1px solid var(--brd);border-radius:20px;padding:4px 12px;font-size:10px;font-weight:500;color:var(--t2);display:flex;align-items:center;gap:4px}
 .formula-pill strong{color:var(--t1);font-weight:700}
 .formula-pill .op{color:var(--t3)}
-.formula-pill .gte{color:#269F66;font-weight:700}
-.period-tag{background:var(--vio100);border:1px solid var(--vio200);border-radius:6px;padding:5px 10px;font-size:11px;font-weight:600;color:var(--vio);white-space:nowrap}
+.formula-pill .gte{color:var(--grn2);font-weight:700}
+.month-wrap{display:flex;align-items:center;gap:5px}
+.month-lbl{font-size:9px;font-weight:600;color:var(--t3)}
+.month-sel{background:var(--vio100);border:1px solid var(--vio200);border-radius:20px;padding:3px 10px;font-family:var(--f);font-size:10px;font-weight:700;color:var(--vio);cursor:pointer;appearance:none}
 
-/* TREE AREA */
-.tree{flex:1;min-height:0;display:flex;flex-direction:column;position:relative}
+/* DIVIDER */
+.divider{display:flex;align-items:center;gap:8px;flex-shrink:0}
+.divider::before,.divider::after{content:'';flex:1;border-top:1px dashed var(--brd2)}
+.divider-lbl{font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;color:var(--t3);white-space:nowrap}
 
-/* CONNECTOR SVG */
-.conn{width:100%;display:block;overflow:visible;flex-shrink:0}
+/* SECTION GRID — chaque section = 3 colonnes de piliers */
+.section{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;flex-shrink:0}
 
-/* LEVELS */
-.level{display:grid;gap:8px;flex-shrink:0}
-.level-root{grid-template-columns:1fr;justify-items:center}
-.level-l1{grid-template-columns:repeat(4,1fr)}
-.level-l2{grid-template-columns:repeat(6,1fr)}
+/* PILIER = header cliquable + grille de bulles KPI en dessous */
+.pilier{display:flex;flex-direction:column;gap:5px}
 
-/* NODE BASE */
-.node{display:block;text-decoration:none;border-radius:10px;padding:11px 13px;border:1px solid;transition:transform .15s,box-shadow .15s;position:relative;cursor:pointer}
-.node:hover{transform:translateY(-2px);box-shadow:0 4px 14px rgba(0,0,0,0.07)}
-.node:active{transform:scale(0.98)}
-.node-arr{position:absolute;top:8px;right:9px;font-size:9px;color:var(--t3);opacity:0;transition:opacity .15s;font-family:sans-serif}
-.node:hover .node-arr{opacity:1}
-
-/* ROOT */
-.node-root{background:var(--vio100);border-color:var(--vio200);text-align:center;min-width:260px;max-width:340px}
-.node-root .nt{font-size:13px;font-weight:700;color:var(--vio700)}
-.node-root .ns{font-size:10px;font-weight:500;color:var(--vio300);margin-top:2px}
-
-/* L1 */
-.nt{font-size:12px;font-weight:700;margin-bottom:2px}
-.ns{font-size:10px;font-weight:500;color:var(--t2);line-height:1.4}
-
-.n-teal{background:#EDFBF6;border-color:#B2EAD8}
-.n-teal .nt{color:#065C40}
-.n-blue{background:#EBF3FD;border-color:#B5D4F4}
-.n-blue .nt{color:#0C447C}
-.n-coral{background:#FEF0EC;border-color:#F9C4B4}
-.n-coral .nt{color:#8C2D15}
-.n-amber{background:#FEF6E4;border-color:#F5DFA0}
-.n-amber .nt{color:#7A4B0A}
-
-/* BADGE */
-.badge{display:inline-block;font-size:9px;font-weight:700;padding:2px 6px;border-radius:4px;margin-top:5px}
+/* HEADER PILIER — cliquable → ouvre Notion */
+.pilier-header{display:flex;align-items:center;justify-content:space-between;background:var(--white);border:1px solid var(--brd);border-radius:10px;padding:8px 12px;cursor:pointer;text-decoration:none;transition:border-color .15s,box-shadow .15s;position:relative}
+.pilier-header::before{content:'';position:absolute;top:0;left:0;right:0;height:2.5px;border-radius:10px 10px 0 0}
+.ph-teal::before{background:var(--grn)}
+.ph-blue::before{background:#155EEF}
+.ph-purple::before{background:#A569BD}
+.ph-pink::before{background:#F63D68}
+.ph-coral::before{background:var(--warn)}
+.ph-amber::before{background:#FFC868}
+.pilier-header:hover{border-color:var(--brd2);box-shadow:0 2px 8px rgba(0,0,0,0.06)}
+.ph-title{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.7px;color:var(--t1)}
+.ph-badge{font-size:8px;font-weight:700;padding:2px 6px;border-radius:10px}
 .b-neg{background:rgba(196,5,5,0.07);color:var(--red);border:1px solid rgba(196,5,5,0.13)}
-.b-ok{background:rgba(97,209,157,0.1);color:#269F66;border:1px solid rgba(97,209,157,0.18)}
+.b-ok{background:rgba(97,209,157,0.1);color:var(--grn2);border:1px solid rgba(97,209,157,0.2)}
 .b-muted{background:var(--neu100);color:var(--t3);border:1px solid var(--brd)}
+.ph-arrow{font-size:9px;color:var(--t3);opacity:0;transition:opacity .15s;position:absolute;right:10px;top:50%;transform:translateY(-50%)}
+.pilier-header:hover .ph-arrow{opacity:1}
 
-/* KPI PANEL — caché par défaut, révélé au toggle */
-.kpi-panel{overflow:hidden;max-height:0;transition:max-height .3s ease,opacity .3s ease,margin-top .3s ease;opacity:0;margin-top:0}
-.kpis-open .kpi-panel{max-height:180px;opacity:1;margin-top:6px}
-.kpi-sep{border:none;border-top:1px solid rgba(0,0,0,0.07);margin:4px 0}
-.kpi-section-lbl{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.6px;color:var(--t3);margin-bottom:3px;margin-top:5px}
-.kpi-section-lbl:first-child{margin-top:0}
-.kpi-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:2px}
-.kpi-lbl{font-size:9px;font-weight:600;text-transform:uppercase;letter-spacing:0.4px;color:var(--t3)}
-.kpi-val{font-size:11px;font-weight:700}
-.kv-pos{color:#269F66}
-.kv-neg{color:var(--red)}
-.kv-muted{color:var(--t3)}
+/* GRILLE DE BULLES KPI */
+.kpi-grid{display:grid;gap:4px}
+.kpi-grid-1{grid-template-columns:1fr}
+.kpi-grid-2{grid-template-columns:1fr 1fr}
+.kpi-grid-3{grid-template-columns:1fr 1fr 1fr}
 
-/* L2 */
-.node-l2{background:var(--white);border-color:var(--brd);padding:9px 10px}
-.node-l2 .nt{font-size:11px;font-weight:600;color:var(--t1)}
-.node-l2 .ns{font-size:9px;color:var(--t3)}
+/* BULLE KPI individuelle */
+.kpi-bubble{background:var(--white);border:1px solid var(--brd);border-radius:8px;padding:8px 10px;display:flex;flex-direction:column;gap:2px}
+.kpi-bubble.kpi-big{padding:10px 12px}
+.kpi-lbl{font-size:8px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;color:var(--t3)}
+.kpi-val{font-size:15px;font-weight:700;color:var(--t1);line-height:1}
+.kpi-val.big{font-size:20px}
+.kpi-val.neg{color:var(--red)}
+.kpi-val.pos{color:var(--grn2)}
+.kpi-val.muted{color:var(--t3);font-weight:500}
+.kpi-sub{font-size:9px;font-weight:500;color:var(--t3);margin-top:1px}
+.kpi-sub.neg{color:var(--red)}
+.kpi-sub.pos{color:var(--grn2)}
 
-/* TOGGLE BTN */
-.toggle-row{display:flex;justify-content:flex-end;flex-shrink:0;padding-top:2px}
-.toggle-btn{background:var(--white);border:1px solid var(--brd);border-radius:6px;padding:5px 12px;font-family:var(--f);font-size:10px;font-weight:600;color:var(--t2);cursor:pointer;display:flex;align-items:center;gap:5px;transition:all .15s}
-.toggle-btn:hover{border-color:var(--vio200);color:var(--vio);background:var(--vio25)}
-.toggle-btn svg{width:10px;height:10px;transition:transform .25s}
-.kpis-open .toggle-btn svg{transform:rotate(180deg)}
+/* TEAL variant bulles */
+.bv-teal .kpi-bubble{background:#EDFBF6;border-color:#B2EAD8}
+.bv-blue .kpi-bubble{background:#EBF3FD;border-color:#B5D4F4}
+.bv-purple .kpi-bubble{background:#F5EEF8;border-color:#D7BDE2}
+.bv-pink .kpi-bubble{background:#FEF0F3;border-color:#FAB8C8}
+.bv-coral .kpi-bubble{background:#FEF3EC;border-color:#FBBF99}
+.bv-amber .kpi-bubble{background:#FFFAEB;border-color:#FFE9A0}
 
-/* CAP LINK */
-.caplink{text-align:center;font-size:10px;font-weight:500;color:var(--t3);flex-shrink:0;padding-bottom:2px}
-.caplink a{color:var(--t3);text-decoration:none}
-.caplink a:hover{color:var(--vio)}
+/* FOOTER */
+.footer{display:flex;justify-content:center;gap:16px;flex-shrink:0}
+.footer a{font-size:9px;font-weight:500;color:var(--t3);text-decoration:none}
+.footer a:hover{color:var(--vio)}
 </style>
 </head>
 <body>
 <div class="page">
 
-  <!-- TOP BAR -->
+  <!-- TOPBAR -->
   <div class="topbar">
     <div class="logo">
       <div class="logo-mark">
-        <svg viewBox="0 0 15 15" fill="none"><path d="M1.5 7.5h3l1.5-4.5 4 9 1.5-4.5h3" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <svg viewBox="0 0 14 14" fill="none"><path d="M1 7h3l1.5-4 3.5 8 1.5-4h3" stroke="white" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
       </div>
-      <div>
-        <div class="logo-name">Qovoltis</div>
-        <div class="logo-sub">Dashboard FP&A · Codir</div>
-      </div>
+      <div><div class="logo-name">Qovoltis</div><div class="logo-sub">Dashboard FP&A · Codir</div></div>
     </div>
-    <div class="topbar-right">
-      <div class="formula-pill">
-        <strong>EBITDA</strong><span class="op">=</span>Marge déploiement<span class="op">+</span>Marge Run<span class="op">−</span>Frais généraux<span class="gte">≥ 0</span>
-      </div>
-      <div class="period-tag">Jan / Fév 2026</div>
+    <div class="formula-pill">
+      <strong>EBITDA</strong><span class="op">=</span>Marge actuelle<span class="op">+</span>Run<span class="op">−</span>Frais généraux<span class="gte">≥ 0</span>
+    </div>
+    <div class="month-wrap">
+      <span class="month-lbl">Période</span>
+      <select class="month-sel" id="msel" onchange="onMonth()">
+        <option value="2026-01">Jan / Fév 2026</option>
+        <option value="2026-03">Mars 2026</option>
+        <option value="2026-04">Avril 2026</option>
+      </select>
     </div>
   </div>
 
-  <!-- TREE -->
-  <div class="tree" id="tree">
+  <!-- DIMENSION ACTUELLE -->
+  <div class="divider"><span class="divider-lbl">Dimension actuelle</span></div>
 
-    <!-- ROOT -->
-    <div class="level level-root">
-      <a class="node node-root" href="https://www.notion.so/33deb69768dc8166b8c1d9856cc86946" target="_blank">
-        <div class="nt">Objectif breakeven EBITDA</div>
-        <div class="ns">Sans levée supplémentaire · Page racine dashboard</div>
-        <span class="node-arr">↗</span>
+  <div class="section">
+
+    <!-- MARGE OPS ACTUELLE -->
+    <div class="pilier bv-teal">
+      <a class="pilier-header ph-teal" href="https://www.notion.so/33deb69768dc819ea1ace37387161274" target="_self">
+        <span class="ph-title">Marge ops actuelle</span>
+        <span class="ph-badge b-neg" id="b-marge">~0.4%</span>
+        <span class="ph-arrow">↗</span>
       </a>
+      <div class="kpi-grid kpi-grid-1">
+        <div class="kpi-bubble kpi-big">
+          <div class="kpi-lbl">CA livré</div>
+          <div class="kpi-val big" id="kpi-ca">236 k€</div>
+          <div class="kpi-sub neg">budget 280 k€ · écart −44</div>
+        </div>
+      </div>
+      <div class="kpi-grid kpi-grid-3">
+        <div class="kpi-bubble">
+          <div class="kpi-lbl">Volume déployé</div>
+          <div class="kpi-val" id="kpi-bornes">65</div>
+          <div class="kpi-sub">bornes</div>
+        </div>
+        <div class="kpi-bubble">
+          <div class="kpi-lbl">Marge réelle</div>
+          <div class="kpi-val neg" id="kpi-mpct">~0.4%</div>
+          <div class="kpi-sub neg" id="kpi-mke">+1 k€</div>
+        </div>
+        <div class="kpi-bubble">
+          <div class="kpi-lbl">Nb chantiers</div>
+          <div class="kpi-val" id="kpi-chantiers">23</div>
+          <div class="kpi-sub">livrés</div>
+        </div>
+      </div>
     </div>
 
-    <svg class="conn" id="svg-r" style="height:24px"></svg>
-
-    <!-- L1 -->
-    <div class="level level-l1" id="l1">
-
-      <a class="node n-teal" href="https://www.notion.so/33deb69768dc810086d0d9a65b7eaf68" target="_blank">
-        <div class="nt">Marge déploiement</div>
-        <div class="ns">Chantiers livrés & en cours</div>
-        <span class="badge b-neg">~0.4% marge</span>
-        <div class="kpi-panel">
-          <div class="kpi-section-lbl">Actuel</div>
-          <div class="kpi-row"><span class="kpi-lbl">CA livré</span><span class="kpi-val">236 k€</span></div>
-          <div class="kpi-row"><span class="kpi-lbl">Marge k€</span><span class="kpi-val kv-neg">+1 k€</span></div>
-          <div class="kpi-row"><span class="kpi-lbl">Marge %</span><span class="kpi-val kv-neg">~0.4%</span></div>
-          <hr class="kpi-sep">
-          <div class="kpi-section-lbl">Projeté</div>
-          <div class="kpi-row"><span class="kpi-lbl">Backlog signé</span><span class="kpi-val kv-muted">—</span></div>
-          <div class="kpi-row"><span class="kpi-lbl">Pipeline (CA prév.)</span><span class="kpi-val kv-muted">—</span></div>
-          <div class="kpi-row"><span class="kpi-lbl">Marge prév.</span><span class="kpi-val kv-muted">—</span></div>
-        </div>
-        <span class="node-arr">↗</span>
+    <!-- RUN ACTUEL -->
+    <div class="pilier bv-purple">
+      <a class="pilier-header ph-purple" href="https://www.notion.so/33deb69768dc8128bf70df55373421df" target="_self">
+        <span class="ph-title">Marge Run actuelle</span>
+        <span class="ph-badge b-muted">À alimenter</span>
+        <span class="ph-arrow">↗</span>
       </a>
-
-      <a class="node n-blue" href="https://www.notion.so/33deb69768dc81d2a952ff9834b2b1f3" target="_blank">
-        <div class="nt">Marge Run</div>
-        <div class="ns">Revenus récurrents · coûts ops</div>
-        <span class="badge b-muted">À alimenter</span>
-        <div class="kpi-panel">
-          <div class="kpi-section-lbl">Actuel</div>
-          <div class="kpi-row"><span class="kpi-lbl">ARR</span><span class="kpi-val kv-muted">—</span></div>
-          <div class="kpi-row"><span class="kpi-lbl">MRR</span><span class="kpi-val kv-muted">—</span></div>
-          <div class="kpi-row"><span class="kpi-lbl">Marge Run</span><span class="kpi-val kv-muted">—</span></div>
-          <hr class="kpi-sep">
-          <div class="kpi-section-lbl">Projeté</div>
-          <div class="kpi-row"><span class="kpi-lbl">ARR projeté</span><span class="kpi-val kv-muted">—</span></div>
-          <div class="kpi-row"><span class="kpi-lbl">Bornes cumulées</span><span class="kpi-val kv-muted">—</span></div>
+      <div class="kpi-grid kpi-grid-1">
+        <div class="kpi-bubble kpi-big">
+          <div class="kpi-lbl">ARR</div>
+          <div class="kpi-val big muted">-- ARR</div>
+          <div class="kpi-sub">revenus récurrents annuels</div>
         </div>
-        <span class="node-arr">↗</span>
-      </a>
-
-      <a class="node n-coral" href="https://www.notion.so/33deb69768dc81b697bbd5ef7aded8f1" target="_blank">
-        <div class="nt">Frais généraux</div>
-        <div class="ns">Structure fixe & variable</div>
-        <span class="badge b-muted">À alimenter</span>
-        <div class="kpi-panel">
-          <div class="kpi-section-lbl">Actuel</div>
-          <div class="kpi-row"><span class="kpi-lbl">FG fixes</span><span class="kpi-val kv-muted">—</span></div>
-          <div class="kpi-row"><span class="kpi-lbl">FG variables</span><span class="kpi-val kv-muted">—</span></div>
-          <div class="kpi-row"><span class="kpi-lbl">% CA total</span><span class="kpi-val kv-muted">—</span></div>
-          <hr class="kpi-sep">
-          <div class="kpi-section-lbl">Projeté</div>
-          <div class="kpi-row"><span class="kpi-lbl">FG projeté</span><span class="kpi-val kv-muted">—</span></div>
+      </div>
+      <div class="kpi-grid kpi-grid-3">
+        <div class="kpi-bubble">
+          <div class="kpi-lbl">Consommation</div>
+          <div class="kpi-val muted">-- kWh</div>
+          <div class="kpi-sub">moy. / borne</div>
         </div>
-        <span class="node-arr">↗</span>
-      </a>
-
-      <a class="node n-amber" href="https://www.notion.so/33deb69768dc812b88c7ffdd4751a3da" target="_blank">
-        <div class="nt">Cash & Runway</div>
-        <div class="ns">Autonomie sans levée</div>
-        <span class="badge b-muted">À alimenter</span>
-        <div class="kpi-panel">
-          <div class="kpi-section-lbl">Actuel</div>
-          <div class="kpi-row"><span class="kpi-lbl">Cash dispo</span><span class="kpi-val kv-muted">—</span></div>
-          <div class="kpi-row"><span class="kpi-lbl">Burn / mois</span><span class="kpi-val kv-muted">—</span></div>
-          <hr class="kpi-sep">
-          <div class="kpi-section-lbl">Projeté</div>
-          <div class="kpi-row"><span class="kpi-lbl">Runway</span><span class="kpi-val kv-muted">— mois</span></div>
-          <div class="kpi-row"><span class="kpi-lbl">Date breakeven</span><span class="kpi-val kv-muted">—</span></div>
+        <div class="kpi-bubble">
+          <div class="kpi-lbl">Bornes service</div>
+          <div class="kpi-val">65</div>
+          <div class="kpi-sub">parc actif</div>
         </div>
-        <span class="node-arr">↗</span>
-      </a>
-
+        <div class="kpi-bubble">
+          <div class="kpi-lbl">Marge Run</div>
+          <div class="kpi-val muted">-- k€</div>
+          <div class="kpi-sub">net ops</div>
+        </div>
+      </div>
     </div>
 
-    <svg class="conn" id="svg-l1" style="height:20px"></svg>
-
-    <!-- L2 -->
-    <div class="level level-l2" id="l2">
-      <a class="node node-l2" href="https://www.notion.so/d5471532a335401dabac2cef924b6896?v=ff4fccd4-e1a3-4dd3-905d-417a3c321500" target="_blank">
-        <div class="nt">Tous les chantiers</div>
-        <div class="ns">23 livrés · marge ASC</div>
-        <span class="node-arr">↗</span>
+    <!-- FRAIS GÉNÉRAUX -->
+    <div class="pilier bv-coral">
+      <a class="pilier-header ph-coral" href="https://www.notion.so/33deb69768dc81208fa8fd9a6298300f" target="_self">
+        <span class="ph-title">Frais généraux actuels</span>
+        <span class="ph-badge b-muted">À alimenter</span>
+        <span class="ph-arrow">↗</span>
       </a>
-      <a class="node node-l2" href="https://www.notion.so/d5471532a335401dabac2cef924b6896?v=33deb697-68dc-817a-83df-000cae913df5" target="_blank">
-        <div class="nt">Marge négative</div>
-        <div class="ns">8 chantiers à risque</div>
-        <span class="badge b-neg" style="font-size:8px;margin-top:3px">filtre actif</span>
-        <span class="node-arr">↗</span>
-      </a>
-      <a class="node node-l2" href="https://www.notion.so/d5471532a335401dabac2cef924b6896?v=33deb697-68dc-81e4-a23c-000ca466f630" target="_blank">
-        <div class="nt">Par segment</div>
-        <div class="ns">B2B · Hôtels · MI · Copro</div>
-        <span class="node-arr">↗</span>
-      </a>
-      <a class="node node-l2" href="https://www.notion.so/d5471532a335401dabac2cef924b6896?v=33deb697-68dc-81ec-89b7-000c8a861af1" target="_blank">
-        <div class="nt">Par complexité</div>
-        <div class="ns">Génie civil vs standard</div>
-        <span class="node-arr">↗</span>
-      </a>
-      <a class="node node-l2" href="https://www.notion.so/26304e2d38634b159bcc8aeec32577f3?v=9c4dcc9f-57a3-4bbc-996d-4a114605e403" target="_blank">
-        <div class="nt">Pipeline / stade</div>
-        <div class="ns">Étude · Travaux · Final.</div>
-        <span class="node-arr">↗</span>
-      </a>
-      <a class="node node-l2" href="https://www.notion.so/26304e2d38634b159bcc8aeec32577f3?v=33deb697-68dc-81f7-b018-000cf9970f74" target="_blank">
-        <div class="nt">Alertes pipeline</div>
-        <div class="ns">B2B −20% · −25%</div>
-        <span class="badge b-neg" style="font-size:8px;margin-top:3px">marge neg.</span>
-        <span class="node-arr">↗</span>
-      </a>
+      <div class="kpi-grid kpi-grid-1">
+        <div class="kpi-bubble kpi-big">
+          <div class="kpi-lbl">FG totaux</div>
+          <div class="kpi-val big muted">-- k€</div>
+          <div class="kpi-sub">fixe + variable</div>
+        </div>
+      </div>
+      <div class="kpi-grid kpi-grid-3">
+        <div class="kpi-bubble">
+          <div class="kpi-lbl">Coûts fixes</div>
+          <div class="kpi-val muted">-- k€</div>
+          <div class="kpi-sub">RH · loyer · IT</div>
+        </div>
+        <div class="kpi-bubble">
+          <div class="kpi-lbl">Coûts variables</div>
+          <div class="kpi-val muted">-- k€</div>
+          <div class="kpi-sub">dép. cible mois</div>
+        </div>
+        <div class="kpi-bubble">
+          <div class="kpi-lbl">% CA total</div>
+          <div class="kpi-val muted">--%</div>
+          <div class="kpi-sub">ratio structure</div>
+        </div>
+      </div>
     </div>
 
   </div>
 
-  <!-- TOGGLE + CAP -->
-  <div style="display:flex;align-items:center;justify-content:space-between;flex-shrink:0">
-    <div class="caplink"><a href="https://www.notion.so/33deb69768dc812cb6bce9edbdf13865" target="_blank">📖 Capitalisation</a></div>
-    <div class="toggle-row" id="toggleRow">
-      <button class="toggle-btn" onclick="toggleKPIs()">
-        <span id="toggleLabel">Afficher KPIs</span>
-        <svg viewBox="0 0 10 10" fill="none"><path d="M2 3.5L5 6.5L8 3.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      </button>
+  <!-- DIMENSION PROJETÉE -->
+  <div class="divider"><span class="divider-lbl">Dimension projetée</span></div>
+
+  <div class="section">
+
+    <!-- MARGE FUTURE -->
+    <div class="pilier bv-blue">
+      <a class="pilier-header ph-blue" href="https://www.notion.so/33deb69768dc81549b53f35c4452ceae" target="_self">
+        <span class="ph-title">Marge prév.</span>
+        <span class="ph-badge b-muted">Backlog + pipe</span>
+        <span class="ph-arrow">↗</span>
+      </a>
+      <div class="kpi-grid kpi-grid-1">
+        <div class="kpi-bubble kpi-big">
+          <div class="kpi-lbl">Marge prév. k€</div>
+          <div class="kpi-val big muted">-- k€</div>
+          <div class="kpi-sub">backlog signé + pipeline</div>
+        </div>
+      </div>
+      <div class="kpi-grid kpi-grid-3">
+        <div class="kpi-bubble">
+          <div class="kpi-lbl">Délai dép.</div>
+          <div class="kpi-val muted">-- M</div>
+          <div class="kpi-sub">signature → service</div>
+        </div>
+        <div class="kpi-bubble">
+          <div class="kpi-lbl">Bornes cmd.</div>
+          <div class="kpi-val muted">--</div>
+          <div class="kpi-sub">backlog ferme</div>
+        </div>
+        <div class="kpi-bubble">
+          <div class="kpi-lbl">Pipe comm.</div>
+          <div class="kpi-val muted">--</div>
+          <div class="kpi-sub">opportunités</div>
+        </div>
+      </div>
     </div>
+
+    <!-- RUN FUTUR -->
+    <div class="pilier bv-pink">
+      <a class="pilier-header ph-pink" href="https://www.notion.so/33deb69768dc818d9d01ebaaf55324b0" target="_self">
+        <span class="ph-title">Marge Run cible</span>
+        <span class="ph-badge b-muted">À alimenter</span>
+        <span class="ph-arrow">↗</span>
+      </a>
+      <div class="kpi-grid kpi-grid-1">
+        <div class="kpi-bubble kpi-big">
+          <div class="kpi-lbl">Marge Run cible</div>
+          <div class="kpi-val big muted">-- k€</div>
+          <div class="kpi-sub">objectif fin de période</div>
+        </div>
+      </div>
+      <div class="kpi-grid kpi-grid-2">
+        <div class="kpi-bubble">
+          <div class="kpi-lbl">ARR cible</div>
+          <div class="kpi-val muted">-- k€</div>
+          <div class="kpi-sub">fin de période</div>
+        </div>
+        <div class="kpi-bubble">
+          <div class="kpi-lbl">Bornes cumul.</div>
+          <div class="kpi-val muted">--</div>
+          <div class="kpi-sub">parc projeté</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CASH & RUNWAY -->
+    <div class="pilier bv-amber">
+      <a class="pilier-header ph-amber" href="https://www.notion.so/33deb69768dc814f914aeca826e46f34" target="_self">
+        <span class="ph-title">Position & Runway</span>
+        <span class="ph-badge b-muted">À alimenter</span>
+        <span class="ph-arrow">↗</span>
+      </a>
+      <div class="kpi-grid kpi-grid-1">
+        <div class="kpi-bubble kpi-big">
+          <div class="kpi-lbl">Position actuelle & Runway</div>
+          <div class="kpi-val big muted">-- M€</div>
+          <div class="kpi-sub">cash disponible</div>
+        </div>
+      </div>
+      <div class="kpi-grid kpi-grid-2">
+        <div class="kpi-bubble">
+          <div class="kpi-lbl">Mois autonomie</div>
+          <div class="kpi-val muted">-- Mois</div>
+          <div class="kpi-sub">estimation burn</div>
+        </div>
+        <div class="kpi-bubble">
+          <div class="kpi-lbl">Breakeven est.</div>
+          <div class="kpi-val muted">--</div>
+          <div class="kpi-sub">date cible</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="footer">
+    <a href="https://www.notion.so/33deb69768dc8166b8c1d9856cc86946" target="_self">🏠 Racine</a>
+    <a href="https://www.notion.so/b61bef3147f5499ba186e081c8a885d9" target="_self">📊 KPIs historisés</a>
+    <a href="https://www.notion.so/33deb69768dc812cb6bce9edbdf13865" target="_self">📖 Capitalisation</a>
   </div>
 
 </div>
-
 <script>
-let kpisOpen = false;
-
-function toggleKPIs() {
-  kpisOpen = !kpisOpen;
-  document.querySelectorAll('#l1 .node').forEach(n => {
-    n.classList.toggle('kpis-open', kpisOpen);
-  });
-  document.querySelector('#toggleRow .toggle-btn').classList.toggle('kpis-open', kpisOpen);
-  document.getElementById('toggleLabel').textContent = kpisOpen ? 'Masquer KPIs' : 'Afficher KPIs';
-  setTimeout(drawConnectors, 320);
+const D={
+  "2026-01":{ca:"236 k€",caC:"",bornes:"65",mpct:"~0.4%",mpctC:"neg",mke:"+1 k€",ch:"23",bt:"~0.4%",bc:"b-neg"},
+  "2026-03":{ca:"-- k€",caC:"muted",bornes:"--",mpct:"--%",mpctC:"muted",mke:"-- k€",ch:"--",bt:"N/A",bc:"b-muted"},
+  "2026-04":{ca:"-- k€",caC:"muted",bornes:"--",mpct:"--%",mpctC:"muted",mke:"-- k€",ch:"--",bt:"N/A",bc:"b-muted"}
+};
+function sv(id,txt,cls){const e=document.getElementById(id);if(!e)return;e.textContent=txt;if(cls!==undefined){e.className=e.className.replace(/\b(neg|pos|muted|big)\b/g,'').trim().replace(/\s+/g,' ');if(cls)e.className+=' '+cls;}}
+function onMonth(){
+  const d=D[document.getElementById('msel').value]||D["2026-01"];
+  sv('kpi-ca',d.ca,d.caC?'big '+d.caC:'big');
+  sv('kpi-bornes',d.bornes,'');
+  sv('kpi-mpct',d.mpct,d.mpctC);
+  sv('kpi-mke',d.mke,d.mpctC);
+  sv('kpi-chantiers',d.ch,'');
+  const b=document.getElementById('b-marge');b.textContent=d.bt;b.className='ph-badge '+d.bc;
 }
-
-function midX(el, ref) {
-  const er = el.getBoundingClientRect();
-  const rr = ref.getBoundingClientRect();
-  return er.left + er.width / 2 - rr.left;
-}
-
-function drawConn(svgEl, fromEls, toEls, color) {
-  const sr = svgEl.getBoundingClientRect();
-  const w = sr.width, h = sr.height;
-  svgEl.setAttribute('viewBox', `0 0 ${w} ${h}`);
-  svgEl.innerHTML = '';
-  fromEls.forEach(f => {
-    const x1 = midX(f, svgEl);
-    toEls.forEach(t => {
-      const x2 = midX(t, svgEl);
-      const p = document.createElementNS('http://www.w3.org/2000/svg','path');
-      p.setAttribute('d', `M${x1} 0 C${x1} ${h} ${x2} 0 ${x2} ${h}`);
-      p.setAttribute('fill','none');
-      p.setAttribute('stroke', color);
-      p.setAttribute('stroke-width','1');
-      svgEl.appendChild(p);
-    });
-  });
-}
-
-function drawConnectors() {
-  const root = document.querySelector('.node-root');
-  const l1 = Array.from(document.querySelectorAll('#l1 .node'));
-  const l2 = Array.from(document.querySelectorAll('#l2 .node'));
-  drawConn(document.getElementById('svg-r'),  [root], l1, '#D2CBFF');
-  drawConn(document.getElementById('svg-l1'), [l1[0]], l2, '#B2EAD8');
-}
-
-requestAnimationFrame(() => setTimeout(drawConnectors, 60));
-window.addEventListener('resize', drawConnectors);
 </script>
 </body>
 </html>
